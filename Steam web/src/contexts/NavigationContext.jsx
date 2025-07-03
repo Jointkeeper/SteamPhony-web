@@ -68,6 +68,21 @@ export function NavigationProvider({ children }) {
 
 export function useNavigation() {
   const ctx = useContext(NavigationContext);
-  if (!ctx) throw new Error('useNavigation must be used within NavigationProvider');
-  return ctx;
+  if (ctx) return ctx;
+
+  // Safe fallback for environments without provider (e.g. Storybook/HMR edge cases)
+  const noop = () => {};
+  return {
+    state: {
+      isDrawerOpen: false,
+      activeSubmenu: null,
+      isNavigationLocked: false,
+    },
+    toggleDrawer: noop,
+    openSubmenu: noop,
+    closeSubmenu: noop,
+    lockNavigation: noop,
+    unlockNavigation: noop,
+    record: noop,
+  };
 } 
