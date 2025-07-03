@@ -1,6 +1,7 @@
 /* Token layers */
 @import './tokens/trust.css';
 @import './tokens/motion.css';
+@import './tokens/type.css';
 
 /* ITCSS architecture */
 @import './itcss/_index.css';

@@ -26,13 +26,47 @@ const config: Config = {
         },
         authority: 'var(--color-authority)',
         warmth: 'var(--color-warmth)'
-      }
+      },
+      fontSize: {
+        xs: 'var(--font-size-xs)',
+        sm: 'var(--font-size-sm)',
+        base: 'var(--font-size-md)',
+        lg: 'var(--font-size-lg)',
+        xl: 'var(--font-size-xl)',
+        '2xl': 'var(--font-size-2xl)',
+        '3xl': 'var(--font-size-3xl)',
+        '4xl': 'var(--font-size-4xl)',
+        hero: 'var(--font-size-hero)',
+      },
+      lineHeight: {
+        tight: 'var(--line-height-tight)',
+        snug: 'var(--line-height-snug)',
+        normal: 'var(--line-height-normal)',
+        relaxed: 'var(--line-height-relaxed)',
+        loose: 'var(--line-height-loose)',
+      },
     }
   },
   plugins: [
     plugin(function ({ addVariant }) {
       addVariant('hocus', ['&:hover', '&:focus']);
-    })
+    }),
+    plugin(({ addUtilities, theme }) => {
+      const sizes = theme('fontSize');
+      const lineHeights = theme('lineHeight');
+      const utilities = Object.keys(sizes).reduce((acc, key) => {
+        acc[`.text-${key}-tight`] = {
+          fontSize: sizes[key],
+          lineHeight: lineHeights.tight,
+        };
+        acc[`.text-${key}-normal`] = {
+          fontSize: sizes[key],
+          lineHeight: lineHeights.normal,
+        };
+        return acc;
+      }, {} as Record<string, any>);
+      addUtilities(utilities, [{ variants: ['responsive'] }]);
+    }),
   ]
 };
 
