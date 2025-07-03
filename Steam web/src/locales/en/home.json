@@ -1,0 +1,36 @@
+{
+  "hero": {
+    "title": "Drive Real Growth for Your Restaurant or Salon Without Overspending on Marketing",
+    "subtitle": "We create digital strategies that increase customer flow by 40-70% in 3 months using proven methods and cutting-edge tools",
+    "cta": "Get Free Strategy Session"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Complete digital solutions for restaurants and beauty salons",
+    "restaurant": {
+      "title": "Restaurant Marketing",
+      "description": "Increase foot traffic and online orders with targeted digital campaigns"
+    },
+    "salon": {
+      "title": "Salon Marketing",
+      "description": "Attract more clients with beauty industry-specific marketing strategies"
+    },
+    "web": {
+      "title": "Web Development",
+      "description": "Professional websites that convert visitors into customers"
+    },
+    "content": {
+      "title": "Content Production",
+      "description": "High-quality visual content that showcases your business"
+    }
+  },
+  "testimonials": {
+    "title": "What Our Clients Say",
+    "subtitle": "Real results from real businesses"
+  },
+  "stats": {
+    "clients": "Happy Clients",
+    "growth": "Average Growth",
+    "projects": "Completed Projects"
+  }
+} 

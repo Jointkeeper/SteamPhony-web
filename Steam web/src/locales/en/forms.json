@@ -1,0 +1,44 @@
+{
+  "contact": {
+    "title": "Get Your Free Marketing Audit",
+    "subtitle": "We'll analyze your current marketing and show you exactly how to get more customers",
+    "fields": {
+      "name": {
+        "label": "Your Name",
+        "placeholder": "Enter your full name"
+      },
+      "email": {
+        "label": "Email Address",
+        "placeholder": "your@email.com"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "placeholder": "+1 (555) 123-4567"
+      },
+      "businessType": {
+        "label": "Business Type",
+        "placeholder": "Select your business type",
+        "options": {
+          "restaurant": "Restaurant",
+          "salon": "Beauty Salon",
+          "other": "Other"
+        }
+      },
+      "message": {
+        "label": "Tell us about your business",
+        "placeholder": "What challenges are you facing with your marketing?"
+      }
+    },
+    "submit": "Get Free Consultation",
+    "success": {
+      "title": "Thank you for your message!",
+      "message": "We'll get back to you within 24 hours with your marketing audit."
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "phone": "Please enter a valid phone number",
+    "minLength": "Minimum {{count}} characters required"
+  }
+} 

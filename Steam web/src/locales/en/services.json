@@ -1,0 +1,77 @@
+{
+  "restaurant": {
+    "title": "Restaurant Digital Marketing",
+    "subtitle": "Increase customer flow and boost revenue with proven restaurant marketing strategies",
+    "hero": {
+      "title": "Fill Your Tables Every Night",
+      "description": "Specialized digital marketing for restaurants that drives real foot traffic and online orders"
+    },
+    "benefits": {
+      "title": "Why Restaurants Choose Us",
+      "items": [
+        "40-70% increase in customer flow within 3 months",
+        "Proven strategies for local restaurant marketing",
+        "Complete social media management",
+        "Online ordering optimization",
+        "Review management and reputation building"
+      ]
+    },
+    "process": {
+      "title": "Our Proven Process",
+      "steps": [
+        {
+          "title": "Restaurant Audit",
+          "description": "We analyze your current marketing and identify opportunities"
+        },
+        {
+          "title": "Strategy Development",
+          "description": "Create a custom marketing plan for your restaurant"
+        },
+        {
+          "title": "Implementation",
+          "description": "Launch campaigns across all relevant channels"
+        },
+        {
+          "title": "Optimization",
+          "description": "Continuously improve results based on data"
+        }
+      ]
+    }
+  },
+  "salon": {
+    "title": "Beauty Salon Marketing",
+    "subtitle": "Attract more clients and increase bookings with beauty industry marketing expertise",
+    "hero": {
+      "title": "Book More Appointments",
+      "description": "Specialized marketing strategies that help beauty salons grow their client base"
+    },
+    "benefits": {
+      "title": "Beauty Industry Expertise",
+      "items": [
+        "Instagram and visual marketing specialization",
+        "Client retention and loyalty programs",
+        "Online booking optimization",
+        "Influencer partnership strategies",
+        "Seasonal campaign management"
+      ]
+    }
+  },
+  "web": {
+    "title": "Professional Web Development",
+    "subtitle": "Custom websites that convert visitors into customers",
+    "hero": {
+      "title": "Websites That Work",
+      "description": "Fast, mobile-optimized websites designed to grow your business"
+    },
+    "benefits": {
+      "title": "Modern Web Solutions",
+      "items": [
+        "Mobile-first responsive design",
+        "Search engine optimization",
+        "Fast loading speeds",
+        "Conversion optimization",
+        "Easy content management"
+      ]
+    }
+  }
+} 

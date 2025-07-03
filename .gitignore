@@ -1,0 +1,12 @@
+# Environment variables
+.env.local
+.env.production
+.env
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+dist/
+build/ 

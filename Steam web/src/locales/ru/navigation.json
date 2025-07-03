@@ -1,0 +1,16 @@
+{
+  "menu": {
+    "home": "Главная",
+    "services": "Услуги",
+    "about": "О нас",
+    "contact": "Контакты",
+    "blog": "Блог",
+    "caseStudies": "Кейсы"
+  },
+  "submenu": {
+    "restaurantMarketing": "Маркетинг для ресторанов",
+    "salonMarketing": "Маркетинг для салонов",
+    "webDevelopment": "Веб-разработка",
+    "contentProduction": "Продакшн контента"
+  }
+} 

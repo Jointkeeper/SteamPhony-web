@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "cta": {
+    "getConsultation": "Get Free Consultation",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "contactUs": "Contact Us",
+    "viewServices": "View Our Services",
+    "readMore": "Read More"
+  },
+  "form": {
+    "name": "Your Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "message": "Tell us about your business",
+    "businessType": "Business Type",
+    "submit": "Send Message",
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address"
+  },
+  "buttons": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "save": "Save"
+  },
+  "status": {
+    "loading": "Loading...",
+    "success": "Success!",
+    "error": "An error occurred",
+    "processing": "Processing..."
+  }
+} 
