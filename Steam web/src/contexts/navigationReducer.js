@@ -2,6 +2,7 @@ export const initialState = {
   isDrawerOpen: false,
   activeSubmenu: null,
   isNavigationLocked: false,
+  lockStart: null,
   history: [],
 };
 
@@ -23,9 +24,9 @@ export function navigationReducer(state, action) {
     case ACTIONS.CLOSE_SUBMENU:
       return { ...state, activeSubmenu: null };
     case ACTIONS.LOCK:
-      return { ...state, isNavigationLocked: true };
+      return { ...state, isNavigationLocked: true, lockStart: Date.now() };
     case ACTIONS.UNLOCK:
-      return { ...state, isNavigationLocked: false };
+      return { ...state, isNavigationLocked: false, lockStart: null };
     case ACTIONS.RECORD:
       return { ...state, history: action.history };
     default:

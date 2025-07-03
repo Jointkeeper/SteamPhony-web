@@ -2,6 +2,7 @@ import { memo, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { sendDuration } from '../../utils/performance';
+import { prefetchLink } from '../../utils/prefetch';
 
 /**
  * NavItem – single navigation link with trust-building micro-interactions.
@@ -22,6 +23,17 @@ const NavItem = memo(function NavItem({ to, children, highlight, onClick }) {
       firstHoverRecorded = true;
     }
     hoveredRef.current = true;
+
+    // Prefetch predicted next route after 500ms hover
+    setTimeout(() => {
+      if (hoveredRef.current) {
+        prefetchLink(to);
+      }
+    }, 500);
+  };
+
+  const handleMouseLeave = () => {
+    hoveredRef.current = false;
   };
 
   return (
@@ -29,6 +41,7 @@ const NavItem = memo(function NavItem({ to, children, highlight, onClick }) {
       to={to}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={({ isActive }) =>
         clsx(
           'nav-item',

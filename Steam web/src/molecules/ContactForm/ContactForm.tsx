@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema, ContactFormData } from './ContactForm.types';
 import { Button } from '@atoms';
 import clsx from 'clsx';
+import { useNavigation } from '../../contexts';
 
 export const ContactForm: React.FC = () => {
   const {
@@ -15,9 +16,13 @@ export const ContactForm: React.FC = () => {
     mode: 'onBlur',
   });
 
+  const { lockNavigation, unlockNavigation } = useNavigation();
+
   const onSubmit = async (data: ContactFormData) => {
+    lockNavigation('contact_form_submit');
     await new Promise((r) => setTimeout(r, 800)); // mock
     console.log(data);
+    unlockNavigation();
   };
 
   return (

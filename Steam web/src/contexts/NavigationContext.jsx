@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer, useCallback, useMemo } from 'rea
 import NavigationHistory from './navigationHistory';
 import { navigationReducer, initialState, ACTIONS } from './navigationReducer';
 import { logEvent } from '../analytics';
+import { sendDuration } from '../utils/performance';
 
 const NavigationContext = createContext(null);
 
@@ -42,9 +43,12 @@ export function NavigationProvider({ children }) {
   }, [record]);
 
   const unlockNavigation = useCallback(() => {
+    if (state.lockStart) {
+      sendDuration('lock_duration', Date.now() - state.lockStart);
+    }
     record('unlock_navigation');
     dispatch({ type: ACTIONS.UNLOCK });
-  }, [record]);
+  }, [state.lockStart, record]);
 
   const value = useMemo(
     () => ({
