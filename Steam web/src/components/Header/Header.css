@@ -1,0 +1,61 @@
+:root {
+  /* Authority gradient for underline */
+  --gradient-authority: linear-gradient(90deg, var(--color-authority) 0%, var(--trust-500) 100%);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.header {
+  /* Glassmorphism backdrop */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: box-shadow var(--duration-fast) var(--ease-in-out),
+    background-color var(--duration-fast) var(--ease-in-out);
+  contain: paint;
+}
+
+.header--scrolled {
+  /* subtle shadow when scrolled */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  font-weight: 500;
+  color: var(--trust-700);
+  transition: transform var(--duration-fast) var(--ease-out-quart),
+    color var(--duration-fast) var(--ease-out-quart);
+}
+
+.nav-item:hover,
+.nav-item:focus-visible {
+  color: var(--color-authority);
+  transform: translateY(-2px);
+}
+
+.nav-item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 0;
+  height: 2px;
+  background-image: var(--gradient-authority);
+  transform: translateX(-50%);
+  transition: width var(--duration-medium) var(--ease-bounce);
+}
+
+.nav-item:hover::after,
+.nav-item:focus-visible::after,
+.nav-item[aria-current="page"]::after {
+  width: 100%;
+}
+
+/* Focus ring */
+.nav-item:focus-visible {
+  outline: 2px solid var(--color-authority);
+  outline-offset: 2px;
+} 
