@@ -30,7 +30,7 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     esbuild: {
-      loader: {
+      loaders: {
         '.js': 'jsx',
       },
     },
