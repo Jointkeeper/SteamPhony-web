@@ -22,7 +22,12 @@
     "paths": {
       "@ui/*": ["src/atoms/*", "src/molecules/*", "src/organisms/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@hooks/*": ["src/hooks/*"],
+      "@atoms/*": ["src/atoms/*"],
+      "@molecules/*": ["src/molecules/*"],
+      "@organisms/*": ["src/organisms/*"],
+      "@utils/*": ["src/utils/*"],
+      "@styles/*": ["src/styles/*"]
     }
   },
   "include": ["src", "**/*.ts", "**/*.tsx"],

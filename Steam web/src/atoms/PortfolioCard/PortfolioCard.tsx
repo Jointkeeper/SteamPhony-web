@@ -23,8 +23,8 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
 }) => {
   const content = (
     <article
-      className="relative flex flex-col overflow-hidden rounded-lg shadow-md transition-transform duration-[var(--duration-medium)] ease-[var(--ease-in-out)] will-change-transform hover:-translate-y-1 hover:shadow-xl md:hover:rotate-y-3d"
-      style={{ perspective: '1000px' }}
+      className="relative flex flex-col overflow-hidden rounded-lg shadow-md transition-transform duration-[var(--duration-medium)] ease-[var(--ease-in-out)] will-change-transform hover:-translate-y-1 hover:shadow-xl md:hover:rotate-y-3d focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--trust-500)]"
+      style={{ perspective: '1000px', contain: 'layout style paint' }}
     >
       <div className="relative h-48 w-full overflow-hidden">
         <LazyImage src={image} placeholderSrc={placeholder} alt={title} className="w-full h-full object-cover" />
@@ -51,7 +51,19 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
       </a>
     );
   }
-  return content;
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          (e.currentTarget as HTMLElement).click();
+        }
+      }}
+    >
+      {content}
+    </div>
+  );
 };
 
 export default PortfolioCard; 
