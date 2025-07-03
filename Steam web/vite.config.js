@@ -11,7 +11,11 @@ export default defineConfig(({ command, mode }) => {
       __APP_VERSION__: JSON.stringify(env.VITE_APP_VERSION || '1.0.0'),
     },
     server: {
-      port: env.PORT ? parseInt(env.PORT) : undefined,
+      port: 3000,
+      host: true,
+    },
+    preview: {
+      port: 3000,
       host: true,
     },
     resolve: {
