@@ -1,7 +1,8 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, memo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
+import { sendDuration } from '../../utils/performance';
 
 import NavItem from './NavItem';
 import MobileDrawer from './MobileDrawer';
@@ -19,6 +20,7 @@ const navigationMeta = [
 
 function useScrolled(offset = 10) {
   const [scrolled, setScrolled] = useState(false);
+  const perfRef = useRef({ count: 0, total: 0 });
 
   useEffect(() => {
     function throttle(fn, wait) {
@@ -33,11 +35,27 @@ function useScrolled(offset = 10) {
     }
 
     const handle = throttle(() => {
+      const t0 = performance.now();
       setScrolled(window.scrollY > offset);
+      const duration = performance.now() - t0;
+      perfRef.current.count += 1;
+      perfRef.current.total += duration;
     }, 16); // ~60fps
 
     window.addEventListener('scroll', handle, { passive: true });
-    return () => window.removeEventListener('scroll', handle);
+
+    const interval = setInterval(() => {
+      if (perfRef.current.count > 0) {
+        const avg = perfRef.current.total / perfRef.current.count;
+        sendDuration('scroll_handler_ms', avg);
+        perfRef.current = { count: 0, total: 0 };
+      }
+    }, 10000); // каждые 10 сек
+
+    return () => {
+      window.removeEventListener('scroll', handle);
+      clearInterval(interval);
+    };
   }, [offset]);
 
   return scrolled;

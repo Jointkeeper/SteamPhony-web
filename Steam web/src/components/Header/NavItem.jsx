@@ -1,6 +1,7 @@
-import { memo } from 'react';
+import { memo, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
+import { sendDuration } from '../../utils/performance';
 
 /**
  * NavItem – single navigation link with trust-building micro-interactions.
@@ -9,11 +10,25 @@ import clsx from 'clsx';
  *
  * highlight – renders link as CTA button (e.g. Contact)
  */
+let firstHoverRecorded = false;
+
 const NavItem = memo(function NavItem({ to, children, highlight, onClick }) {
+  const hoveredRef = useRef(false);
+
+  const handleMouseEnter = () => {
+    if (!firstHoverRecorded) {
+      // performance.now() – время с момента навигации
+      sendDuration('first_hover_delay', performance.now());
+      firstHoverRecorded = true;
+    }
+    hoveredRef.current = true;
+  };
+
   return (
     <NavLink
       to={to}
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
       className={({ isActive }) =>
         clsx(
           'nav-item',
