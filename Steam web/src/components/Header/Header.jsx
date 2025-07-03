@@ -7,6 +7,7 @@ import { sendDuration } from '../../utils/performance';
 import NavItem from './NavItem';
 import MobileDrawer from './MobileDrawer';
 import LanguageSwitcher from '../LanguageSwitcher';
+import { useNavigation } from '../../contexts';
 
 import './Header.css';
 
@@ -64,7 +65,7 @@ function useScrolled(offset = 10) {
 const Header = memo(function Header() {
   const { t } = useTranslation('navigation');
   const { pathname } = useLocation();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { state: navState, toggleDrawer } = useNavigation();
   const scrolled = useScrolled(10);
 
   // Generate nav items with current language prefix to preserve context
@@ -107,9 +108,9 @@ const Header = memo(function Header() {
           <button
             type="button"
             className="md:hidden inline-flex items-center justify-center p-2 text-[color:var(--trust-700)] focus-visible:outline-[var(--color-authority)]"
-            aria-label={drawerOpen ? t('aria.closeMenu') : t('aria.openMenu')}
-            aria-expanded={drawerOpen}
-            onClick={() => setDrawerOpen((o) => !o)}
+            aria-label={navState.isDrawerOpen ? t('aria.closeMenu') : t('aria.openMenu')}
+            aria-expanded={navState.isDrawerOpen}
+            onClick={toggleDrawer}
           >
             <svg
               className="w-6 h-6"
@@ -117,7 +118,7 @@ const Header = memo(function Header() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              {drawerOpen ? (
+              {navState.isDrawerOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               ) : (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -131,7 +132,7 @@ const Header = memo(function Header() {
       <div className="h-20 md:h-[80px]" aria-hidden="true" />
 
       {/* Mobile Drawer */}
-      <MobileDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} navigationItems={navigationItems} />
+      <MobileDrawer isOpen={navState.isDrawerOpen} navigationItems={navigationItems} />
     </>
   );
 });

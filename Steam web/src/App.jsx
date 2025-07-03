@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { logEvent, setAnalyticsCookie } from './analytics';
 import AppRouter from './router/AppRouter';
 import './App.css';
+import { NavigationProvider } from './contexts';
 
 function App() {
   useEffect(() => {
@@ -13,9 +14,11 @@ function App() {
 
   return (
     <HelmetProvider>
-      <Router>
-        <AppRouter />
-      </Router>
+      <NavigationProvider>
+        <Router>
+          <AppRouter />
+        </Router>
+      </NavigationProvider>
     </HelmetProvider>
   );
 }

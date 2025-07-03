@@ -6,6 +6,7 @@ import NavItem from './NavItem';
 import LanguageSwitcher from '../LanguageSwitcher';
 import useAnimation from '../../hooks/useAnimation';
 import { sendDuration } from '../../utils/performance';
+import { useNavigation } from '../../contexts';
 
 const focusableSelectors =
   'a[href], area[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
@@ -60,9 +61,10 @@ function useFocusTrap(containerRef, isOpen) {
   }, [containerRef, isOpen]);
 }
 
-export default function MobileDrawer({ isOpen, onClose, navigationItems }) {
+export default function MobileDrawer({ isOpen, navigationItems }) {
   const containerRef = useRef(null);
   const location = useLocation();
+  const { toggleDrawer } = useNavigation();
 
   // Animation library (lazy)
   const { motion, AnimatePresence } = useAnimation();
@@ -73,16 +75,16 @@ export default function MobileDrawer({ isOpen, onClose, navigationItems }) {
   useBodyScrollLock(isOpen);
   useFocusTrap(containerRef, isOpen);
 
-  // Close on route change
-  useEffect(() => {
-    onClose();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
-
   // Record action start time on state change
   useEffect(() => {
     actionRef.current = { type: isOpen ? 'open' : 'close', start: performance.now() };
   }, [isOpen]);
+
+  // Close on route change if currently open
+  useEffect(() => {
+    if (isOpen) toggleDrawer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   if (typeof document === 'undefined') return null;
 
@@ -100,7 +102,7 @@ export default function MobileDrawer({ isOpen, onClose, navigationItems }) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
                 className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999]"
-                onClick={onClose}
+                onClick={toggleDrawer}
               />
             )}
 
@@ -117,7 +119,7 @@ export default function MobileDrawer({ isOpen, onClose, navigationItems }) {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.2}
                 onDragEnd={(event, info) => {
-                  if (info.offset.x > 120) onClose();
+                  if (info.offset.x > 120) toggleDrawer();
                 }}
                 onAnimationComplete={() => {
                   const { type, start } = actionRef.current || {};
@@ -133,7 +135,7 @@ export default function MobileDrawer({ isOpen, onClose, navigationItems }) {
               >
                 <nav aria-label="Mobile navigation" className="flex flex-col gap-4 flex-1">
                   {navigationItems.map((item) => (
-                    <NavItem key={item.key} to={item.path} highlight={item.highlight} onClick={onClose}>
+                    <NavItem key={item.key} to={item.path} highlight={item.highlight} onClick={toggleDrawer}>
                       {item.label}
                     </NavItem>
                   ))}
