@@ -1,11 +1,11 @@
-import { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 
 // Placeholder motion proxy – returns <div {...props}/> preserving layout
 function createPlaceholderMotion() {
   return new Proxy(
     {},
     {
-      get: () => (props) => <div {...props} />, // e.g. motion.div, motion.span etc.
+      get: () => (props) => React.createElement('div', props), // placeholder element
     }
   );
 }
