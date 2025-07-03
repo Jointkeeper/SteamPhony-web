@@ -9,4 +9,18 @@ logs/
 
 # Build artifacts
 dist/
-build/ 
+build/
+
+# Dependencies
+node_modules/
+steamphony-api/node_modules/
+
+# Storybook build
+storybook-static/
+
+# Coverage
+coverage/
+
+# Vite reports
+*.html
+*.map 
