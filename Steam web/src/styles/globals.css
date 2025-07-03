@@ -1,0 +1,11 @@
+/* Token layers */
+@import './tokens/trust.css';
+@import './tokens/motion.css';
+
+/* ITCSS architecture */
+@import './itcss/_index.css';
+
+/* Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities; 
