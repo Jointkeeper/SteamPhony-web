@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useAnimation from '../hooks/useAnimation';
 
 import Layout from '../components/Layout';
 
@@ -13,6 +14,8 @@ import Layout from '../components/Layout';
 export default function LanguageLayout() {
   const { lang } = useParams();
   const { i18n } = useTranslation();
+  const location = useLocation();
+  const { motion, AnimatePresence } = useAnimation();
 
   // Keep i18next in sync with the URL segment.
   useEffect(() => {
@@ -23,7 +26,17 @@ export default function LanguageLayout() {
 
   return (
     <Layout>
-      <Outlet />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
+          <Outlet />
+        </motion.div>
+      </AnimatePresence>
     </Layout>
   );
 } 

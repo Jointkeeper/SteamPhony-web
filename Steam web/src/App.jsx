@@ -14,6 +14,9 @@ import { useEffect } from 'react';
 import { logEvent, setAnalyticsCookie } from './analytics';
 import Layout from './components/Layout';
 import './App.css';
+import { Suspense } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+import Loader from './components/Loader';
 
 function App() {
   useEffect(() => {
@@ -23,21 +26,25 @@ function App() {
 
   return (
     <HelmetProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/services/restaurant-marketing" element={<RestaurantMarketing />} />
-            <Route path="/services/salon-marketing" element={<SalonMarketing />} />
-            <Route path="/services/web-development" element={<WebDevelopment />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </Router>
+      <ErrorBoundary>
+        <Suspense fallback={<Loader fullScreen />}> 
+          <Router>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/services/restaurant-marketing" element={<RestaurantMarketing />} />
+                <Route path="/services/salon-marketing" element={<SalonMarketing />} />
+                <Route path="/services/web-development" element={<WebDevelopment />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </Router>
+        </Suspense>
+      </ErrorBoundary>
       <Toaster position="top-right" reverseOrder={false} />
     </HelmetProvider>
   );

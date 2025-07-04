@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import clsx from 'clsx';
+import useAnimation from '../../hooks/useAnimation';
 
 const Input = forwardRef(({ 
   className,
@@ -9,8 +10,14 @@ const Input = forwardRef(({
   helper,
   ...props 
 }, ref) => {
+  const { motion } = useAnimation();
+
   return (
-    <div className="w-full">
+    <motion.div
+      className="w-full"
+      animate={error ? { x: [0, -6, 6, -4, 4, -2, 2, 0] } : { x: 0 }}
+      transition={{ duration: 0.4, ease: 'easeInOut' }}
+    >
       {label && (
         <label 
           htmlFor={props.id}
@@ -39,7 +46,7 @@ const Input = forwardRef(({
       {helper && !error && (
         <p className="mt-1 text-sm text-gray-500">{helper}</p>
       )}
-    </div>
+    </motion.div>
   );
 });
 
