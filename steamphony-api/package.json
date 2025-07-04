@@ -12,6 +12,8 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
+    "postinstall": "prisma generate",
+    "start:docker": "prisma migrate deploy && nodemon src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --preview-feature",
     "prisma:studio": "prisma studio",
