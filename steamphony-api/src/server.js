@@ -45,7 +45,7 @@ const prisma = new PrismaClient();
 // Routes
 app.get('/api/health', (req, res) => {
   res.json({
-    status: 'ok',
+    status: 'OK',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
   });
