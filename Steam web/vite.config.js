@@ -29,10 +29,5 @@ export default defineConfig(({ command, mode }) => {
         '@styles': resolve(__dirname, 'src/styles'),
       },
     },
-    esbuild: {
-      loaders: {
-        '.js': 'jsx',
-      },
-    },
   }
 })

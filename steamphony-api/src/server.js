@@ -169,6 +169,41 @@ app.post('/api/analytics/event', requireApiKey, (req, res, next) => {
   }
 });
 
+// GA4 proxy endpoint (server-side collection to bypass ad-block)
+app.post('/api/ga4', requireApiKey, async (req, res, next) => {
+  try {
+    const { client_id, events } = req.body;
+
+    if (!client_id || !Array.isArray(events)) {
+      return next(createError('VALIDATION_ERROR', 'client_id and events are required', null, 400, 'validation'));
+    }
+
+    const measurementId = process.env.GA_MEASUREMENT_ID;
+    const apiSecret = process.env.GA_API_SECRET;
+
+    if (!measurementId || !apiSecret) {
+      return next(createError('CONFIG_ERROR', 'GA credentials not configured', null, 500, 'network'));
+    }
+
+    const url = `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`;
+
+    const gaRes = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id, events }),
+    });
+
+    if (!gaRes.ok) {
+      const text = await gaRes.text();
+      throw createError('GA_ERROR', `GA4 error: ${text}`, null, 502, 'network');
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Swagger UI (dev only)
 if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER_UI === 'true') {
   import('swagger-ui-express').then(({ default: swaggerUi }) => {

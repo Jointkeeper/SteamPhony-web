@@ -20,9 +20,26 @@ export const ContactForm: React.FC = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     lockNavigation('contact_form_submit');
-    await new Promise((r) => setTimeout(r, 800)); // mock
-    console.log(data);
-    unlockNavigation();
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.error?.message || 'Ошибка отправки формы');
+      }
+
+      // eslint-disable-next-line no-alert -- temporary success feedback
+      alert('Спасибо! Ваше сообщение отправлено.');
+    } catch (error: any) {
+      // eslint-disable-next-line no-alert
+      alert(error.message || 'Ошибка, попробуйте позже');
+    } finally {
+      unlockNavigation();
+    }
   };
 
   return (

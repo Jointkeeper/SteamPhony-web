@@ -4,8 +4,9 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
+import toast from 'react-hot-toast';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 const ContactForm = ({ title, subtitle, size = 'default' }) => {
   const { t, i18n } = useTranslation(['forms', 'common']);
@@ -67,12 +68,13 @@ const ContactForm = ({ title, subtitle, size = 'default' }) => {
         timestamp: new Date().toISOString(),
         source: 'website_contact_form'
       };
-      const response = await fetch('http://localhost:3001/api/contact', {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submissionData),
       });
       if (response.ok) {
+        toast.success(t('forms:contact.success.title', 'Thank you for your message!'));
         setSubmitted(true);
         if (window.gtag) {
           window.gtag('event', 'form_submission', {
@@ -89,7 +91,7 @@ const ContactForm = ({ title, subtitle, size = 'default' }) => {
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      alert(t('common:status.error'));
+      toast.error(t('common:status.error'));
     } finally {
       setIsSubmitting(false);
     }

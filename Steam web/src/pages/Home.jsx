@@ -2,9 +2,11 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import ContactForm from '../components/ContactForm';
 import Button from '../components/ui/Button';
+import useAnimation from '../hooks/useAnimation';
 
 export default function Home() {
   const { t } = useTranslation(['home', 'common']);
+  const { motion } = useAnimation();
 
   return (
     <>
@@ -15,13 +17,19 @@ export default function Home() {
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 text-center">
+        <motion.div
+          className="max-w-7xl mx-auto px-4 text-center"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+        >
           <h1 className="text-4xl md:text-6xl font-bold mb-6">{t('home:hero.title')}</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">{t('home:hero.subtitle')}</p>
           <Button size="lg" variant="success">
             {t('home:hero.cta')}
           </Button>
-        </div>
+        </motion.div>
       </section>
 
       {/* Services */}

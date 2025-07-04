@@ -19,6 +19,7 @@ import About from '../pages/About';
 import Contact from '../pages/Contact';
 import Blog from '../pages/Blog';
 import NotFound from '../pages/NotFound';
+import Portfolio from '../pages/Portfolio';
 
 // Supported languages constant – helps to avoid hard-coded values across the app
 const SUPPORTED_LANGS = ['en', 'ru'];
@@ -68,6 +69,7 @@ export default function AppRouter() {
         </Route>
 
         <Route path="about" element={<About />} />
+        <Route path="portfolio" element={<Portfolio />} />
         <Route path="contact" element={<Contact />} />
         <Route path="blog" element={<Blog />} />
       </Route>
