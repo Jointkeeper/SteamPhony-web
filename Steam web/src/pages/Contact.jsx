@@ -284,7 +284,7 @@ export default function Contact() {
           animate={{ scale: 1 }}
           transition={{ delay: 1, type: "spring", stiffness: 200 }}
         >
-          <button className="w-16 h-16 bg-brown-trust hover:bg-brown-action text-white rounded-full shadow-lg flex items-center justify-center transition-colors">
+          <button aria-label="Открыть чат" className="w-16 h-16 bg-brown-trust hover:bg-brown-action text-white rounded-full shadow-lg flex items-center justify-center transition-colors">
             <span className="text-2xl">💬</span>
           </button>
         </motion.div>

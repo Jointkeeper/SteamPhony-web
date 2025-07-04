@@ -13,7 +13,13 @@ function createPlaceholderMotion() {
 export default function useAnimation() {
   const [lib, setLib] = useState(null);
 
+  // If user prefers reduced motion, skip importing animation library
+  const prefersReduced = typeof window !== 'undefined' &&
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   useEffect(() => {
+    if (prefersReduced) return; // don't load lib, keep placeholder
+
     let cancelled = false;
     import('framer-motion')
       .then((mod) => {
@@ -23,10 +29,11 @@ export default function useAnimation() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [prefersReduced]);
 
-  if (lib) {
+  if (lib && !prefersReduced) {
     return { motion: lib.motion, AnimatePresence: lib.AnimatePresence, ready: true };
   }
+  // Fallback placeholder (either loading or reduced motion)
   return { motion: createPlaceholderMotion(), AnimatePresence: Fragment, ready: false };
 } 
