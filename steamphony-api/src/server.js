@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import emailService from './services/emailService.js';
 import { body, validationResult } from 'express-validator';
+import { PrismaClient } from '@prisma/client';
 
 dotenv.config();
 
@@ -37,6 +38,9 @@ app.use(morgan('combined'));
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Initialise Prisma
+const prisma = new PrismaClient();
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -84,33 +88,37 @@ app.post('/api/contact', contactValidation, async (req, res) => {
       });
     }
 
-    const { name, email, phone, businessType, message, language } = req.body;
+    const { name, email, phone, businessType, message, language = 'en' } = req.body;
 
-    const submission = {
-      id: `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone?.trim() || null,
-      businessType: businessType || null,
-      message: message.trim(),
-      language: language || 'en',
-      timestamp: new Date().toISOString(),
-      ip: req.ip,
-      userAgent: req.get('User-Agent'),
-    };
+    // Persist to database
+    const lead = await prisma.lead.create({
+      data: {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone?.trim() || null,
+        businessType: businessType || null,
+        message: message.trim(),
+        language,
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+      },
+    });
 
     console.log('📧 New contact submission:', {
-      id: submission.id,
-      name: submission.name,
-      email: submission.email,
-      businessType: submission.businessType,
-      language: submission.language,
-      timestamp: submission.timestamp,
+      id: lead.id,
+      name: lead.name,
+      email: lead.email,
+      businessType: lead.businessType,
+      language: lead.language,
+      timestamp: lead.createdAt,
     });
 
     // Отправка email уведомлений (асинхронно)
     emailService
-      .sendContactNotification(submission)
+      .sendContactNotification({
+        ...lead,
+        timestamp: lead.createdAt,
+      })
       .then((success) => {
         if (success) {
           console.log('📧 Email notifications sent successfully');
@@ -125,7 +133,12 @@ app.post('/api/contact', contactValidation, async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Contact form submitted successfully',
-      id: submission.id,
+      lead: {
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        createdAt: lead.createdAt,
+      },
     });
   } catch (error) {
     console.error('❌ Contact form error:', error);
@@ -164,6 +177,12 @@ app.use((err, req, res, next) => {
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ success: false, message: 'API endpoint not found' });
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
 });
 
 const PORT = process.env.PORT || 3001;
