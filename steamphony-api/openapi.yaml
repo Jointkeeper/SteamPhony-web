@@ -1,0 +1,164 @@
+openapi: 3.1.0
+info:
+  title: Steamphony API
+  version: 1.0.0
+  description: >-
+    REST API for Steamphony marketing platform. All responses use the unified
+    envelope structure.
+servers:
+  - url: https://api.steamphony.com
+    description: Production
+  - url: http://localhost:3001
+    description: Local development
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Validation failed
+            details:
+              type: array
+              items: {}
+              nullable: true
+      required: [success, error]
+    LeadResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Contact form submitted successfully
+        lead:
+          type: object
+          properties:
+            id:
+              type: string
+              example: clx123abc
+            name:
+              type: string
+            email:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+      required: [success, message, lead]
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK
+        timestamp:
+          type: string
+          format: date-time
+        environment:
+          type: string
+          example: development
+paths:
+  /api/health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /api/contact:
+    post:
+      summary: Submit contact form (lead capture)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                businessType:
+                  type: string
+                  enum: [restaurant, beauty, retail, other]
+                message:
+                  type: string
+                language:
+                  type: string
+                  example: ru
+              required: [name, email, message]
+      responses:
+        '201':
+          description: Lead created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/analytics/event:
+    post:
+      summary: Send analytics event (internal)
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: string
+                data:
+                  type: object
+                  additionalProperties: true
+              required: [event]
+      responses:
+        '200':
+          description: Event recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: Invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
