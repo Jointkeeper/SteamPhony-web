@@ -81,6 +81,9 @@ const contactValidation = [
     .withMessage('Invalid business type'),
 ];
 
+// Rate limiting for contact form
+app.use('/api/contact', rateLimiter);
+
 // Contact form endpoint
 app.post('/api/contact', contactValidation, async (req, res, next) => {
   try {
