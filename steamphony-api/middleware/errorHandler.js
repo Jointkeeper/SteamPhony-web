@@ -8,6 +8,7 @@ export const errorHandler = (err, req, res, _next) => {
     success: false,
     error: {
       code: err.code || 'INTERNAL_ERROR',
+      type: err.type || 'business',
       message: err.message || 'Internal server error',
       details: err.details || null,
     },

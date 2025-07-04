@@ -12,6 +12,6 @@ export const rateLimiter = rateLimit({
   legacyHeaders: false,
   handler: (req, _res, next) => {
     logger.warn(`Rate limit exceeded for ${req.ip} ${req.method} ${req.originalUrl}`);
-    next(createError('RATE_LIMIT', 'Too many requests, please try again later', null, 429));
+    next(createError('RATE_LIMIT', 'Too many requests, please try again later', null, 429, 'network'));
   },
 }); 

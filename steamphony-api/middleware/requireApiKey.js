@@ -10,7 +10,7 @@ export const requireApiKey = (req, _res, next) => {
   }
 
   if (!apiKeyHeader || apiKeyHeader !== validKey) {
-    return next(createError('UNAUTHORIZED', 'Invalid API key', null, 401));
+    return next(createError('UNAUTHORIZED', 'Invalid API key', null, 401, 'network'));
   }
 
   return next();

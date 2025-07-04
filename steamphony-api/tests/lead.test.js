@@ -43,6 +43,7 @@ describe('Lead API', () => {
     const res = await request(app).post('/api/contact').send({}).expect(400);
     expect(res.body.success).toBe(false);
     expect(res.body.error.code).toBe('VALIDATION_ERROR');
+    expect(res.body.error.type).toBe('validation');
   });
 });
 

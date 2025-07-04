@@ -87,7 +87,7 @@ app.post('/api/contact', contactValidation, async (req, res, next) => {
     // validation result
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return next(createError('VALIDATION_ERROR', 'Validation failed', errors.array(), 400));
+      return next(createError('VALIDATION_ERROR', 'Validation failed', errors.array(), 400, 'validation'));
     }
 
     const { name, email, phone, businessType, message, language = 'en' } = req.body;
