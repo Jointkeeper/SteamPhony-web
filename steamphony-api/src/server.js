@@ -3,7 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
-import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import emailService from './services/emailService.js';
 import { body, validationResult } from 'express-validator';
@@ -12,6 +11,7 @@ import xss from 'xss-clean';
 import { errorHandler } from '../middleware/errorHandler.js';
 import { createError } from '../utils/createError.js';
 import { requireApiKey } from '../middleware/requireApiKey.js';
+import { rateLimiter } from '../middleware/rateLimiter.js';
 
 dotenv.config();
 
@@ -32,13 +32,6 @@ app.use(
     credentials: true,
   })
 );
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-});
-app.use(limiter);
 
 // Logging
 app.use(morgan('combined'));

@@ -1,11 +1,4 @@
-import winston from 'winston';
-
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  transports: [
-    new winston.transports.Console({ format: winston.format.simple() }),
-  ],
-});
+import { logger } from '../utils/logger.js';
 
 export const errorHandler = (err, req, res, _next) => {
   const status = err.status || 500;
