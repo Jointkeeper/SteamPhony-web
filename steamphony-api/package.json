@@ -16,7 +16,9 @@
     "prisma:migrate": "prisma migrate dev --preview-feature",
     "prisma:studio": "prisma studio",
     "docker:up": "docker-compose -f docker-compose.yml up -d",
-    "docker:down": "docker-compose -f docker-compose.yml down"
+    "docker:down": "docker-compose -f docker-compose.yml down",
+    "docs:validate": "swagger-cli validate openapi.yaml",
+    "docs:generate": "redoc-cli build openapi.yaml -o docs/index.html"
   },
   "dependencies": {
     "compression": "^1.7.4",
@@ -44,6 +46,8 @@
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "supertest": "^6.3.3",
-    "prisma": "^5.13.0"
+    "prisma": "^5.13.0",
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "redoc-cli": "^0.13.21"
   }
 } 

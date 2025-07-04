@@ -1,0 +1,77 @@
+name: API Documentation
+
+on:
+  push:
+    paths:
+      - 'steamphony-api/openapi.yaml'
+      - 'steamphony-api/package.json'
+  pull_request:
+    paths:
+      - 'steamphony-api/openapi.yaml'
+
+jobs:
+  validate-spec:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: steamphony-api
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: 'steamphony-api/package.json'
+
+      - name: Install dependencies
+        run: npm install --omit=optional --no-audit --progress=false
+
+      - name: Validate OpenAPI spec
+        run: npx swagger-cli validate openapi.yaml
+
+  generate-docs:
+    needs: validate-spec
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: steamphony-api
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: 'steamphony-api/package.json'
+
+      - run: npm install --omit=optional --no-audit --progress=false
+
+      - name: Build Redoc HTML
+        run: npx redoc-cli build openapi.yaml -o public/index.html
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-docs
+          path: steamphony-api/public/index.html
+
+  deploy-docs:
+    needs: generate-docs
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: api-docs
+          path: site
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site
+          publish_branch: gh-pages 
