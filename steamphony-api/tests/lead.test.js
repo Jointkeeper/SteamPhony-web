@@ -22,6 +22,7 @@ describe('Lead API', () => {
     const res = await request(app).post('/api/contact').send(validLeadData).expect(201);
     expect(res.body.success).toBe(true);
     expect(res.body.lead.email).toBe(validLeadData.email);
+    expect(res.body.message).toBe('Contact form submitted successfully');
   });
 
   it('should create lead with minimal required fields', async () => {
@@ -41,6 +42,7 @@ describe('Lead API', () => {
   it('should fail with missing required fields', async () => {
     const res = await request(app).post('/api/contact').send({}).expect(400);
     expect(res.body.success).toBe(false);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
   });
 });
 
