@@ -1,0 +1,39 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    paths:
+      - 'Steam web/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'Steam web/**'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'Steam web'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: 'Steam web/package.json'
+
+      - name: Install dependencies
+        run: npm ci --omit=optional --no-audit --progress=false
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test -- --run
+
+      - name: Build
+        run: npm run build 
