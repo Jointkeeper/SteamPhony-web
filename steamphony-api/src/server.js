@@ -12,6 +12,8 @@ import { errorHandler } from '../middleware/errorHandler.js';
 import { createError } from '../utils/createError.js';
 import { requireApiKey } from '../middleware/requireApiKey.js';
 import { rateLimiter } from '../middleware/rateLimiter.js';
+import { dirname, resolve as pathResolve } from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
@@ -166,6 +168,18 @@ app.post('/api/analytics/event', requireApiKey, (req, res, next) => {
     next(error);
   }
 });
+
+// Swagger UI (dev only)
+if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER_UI === 'true') {
+  import('swagger-ui-express').then(({ default: swaggerUi }) => {
+    import('yamljs').then(({ default: YAML }) => {
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+      const swaggerDocument = YAML.load(pathResolve(__dirname, '../openapi.yaml'));
+      app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+      console.log('📚 Swagger UI available at /api/docs');
+    });
+  });
+}
 
 // 404 handler
 app.use('*', (req, res) => {
