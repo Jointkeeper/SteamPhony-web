@@ -17,6 +17,7 @@ describe('Contact Form', () => {
     businessType: 'restaurant',
     message: 'Test message content',
     language: 'en',
+    captchaToken: 'test'
   };
 
   it('should accept valid contact form submission', async () => {
@@ -27,7 +28,7 @@ describe('Contact Form', () => {
   });
 
   it('should reject contact form without required fields', async () => {
-    const res = await request(app).post('/api/contact').send({ name: 'Only name' }).expect(400);
+    const res = await request(app).post('/api/contact').send({ name: 'Only name', captchaToken: 't' }).expect(400);
     expect(res.body.success).toBe(false);
   });
 }); 

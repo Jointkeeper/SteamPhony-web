@@ -14,6 +14,7 @@ import { requireApiKey } from '../middleware/requireApiKey.js';
 import { rateLimiter } from '../middleware/rateLimiter.js';
 import { dirname, resolve as pathResolve } from 'path';
 import { fileURLToPath } from 'url';
+import fetch from 'node-fetch';
 
 dotenv.config();
 
@@ -79,6 +80,7 @@ const contactValidation = [
     .optional()
     .isIn(['restaurant', 'beauty', 'retail', 'other'])
     .withMessage('Invalid business type'),
+  body('captchaToken').notEmpty().withMessage('Captcha token is required'),
 ];
 
 // Rate limiting for contact form
@@ -93,7 +95,17 @@ app.post('/api/contact', contactValidation, async (req, res, next) => {
       return next(createError('VALIDATION_ERROR', 'Validation failed', errors.array(), 400, 'validation'));
     }
 
-    const { name, email, phone, businessType, message, language = 'en' } = req.body;
+    const { name, email, phone, businessType, message, language = 'en', captchaToken } = req.body;
+
+    // Verify captcha if secret provided
+    if (process.env.CAPTCHA_SECRET) {
+      const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET}&response=${captchaToken}`;
+      const captchaRes = await fetch(verifyUrl, { method: 'POST' });
+      const captchaJson = await captchaRes.json();
+      if (!captchaJson.success) {
+        return next(createError('CAPTCHA_FAILED', 'Captcha verification failed', captchaJson['error-codes'] || null, 400, 'validation'));
+      }
+    }
 
     // Persist to database
     const lead = await prisma.lead.create({
