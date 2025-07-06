@@ -1,13 +1,12 @@
-import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ContactForm from '../components/ContactForm';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import useAnimation from '../hooks/useAnimation';
 
 export default function Home() {
-  const { t } = useTranslation(['home', 'common']);
+  const { motion } = useAnimation();
 
   return (
     <>
@@ -53,12 +52,14 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
           >
-            <Button 
-              size="lg" 
-              className="bg-brown-trust hover:bg-brown-action text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-105"
-            >
-              Получить стратегию роста
-            </Button>
+            <Link to="/contact">
+              <Button 
+                size="lg" 
+                className="bg-brown-trust hover:bg-brown-action text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-105"
+              >
+                Получить стратегию роста
+              </Button>
+            </Link>
             <p className="text-sm opacity-75">Помогаем компаниям расти с 2024</p>
           </motion.div>
         </motion.div>
@@ -229,7 +230,7 @@ export default function Home() {
                   <p className="text-3xl font-bold text-purple-bright mb-2">+250%</p>
                   <p className="text-gray-600 mb-4">увеличение конверсии</p>
                   <Link 
-                    to="/portfolio" 
+                    to="/work" 
                     className="text-brown-trust hover:text-brown-action font-medium inline-flex items-center"
                   >
                     Подробнее →
@@ -254,7 +255,7 @@ export default function Home() {
                   <p className="text-3xl font-bold text-brown-trust mb-2">10,000</p>
                   <p className="text-gray-600 mb-4">пользователей за 3 месяца</p>
                   <Link 
-                    to="/portfolio" 
+                    to="/work" 
                     className="text-brown-trust hover:text-brown-action font-medium inline-flex items-center"
                   >
                     Подробнее →
@@ -279,7 +280,7 @@ export default function Home() {
                   <p className="text-3xl font-bold text-purple-bright mb-2">-60%</p>
                   <p className="text-gray-600 mb-4">времени на обработку заявок</p>
                   <Link 
-                    to="/portfolio" 
+                    to="/work" 
                     className="text-brown-trust hover:text-brown-action font-medium inline-flex items-center"
                   >
                     Подробнее →

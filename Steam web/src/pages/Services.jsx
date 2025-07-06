@@ -1,48 +1,22 @@
-import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
+import useAnimation from '../hooks/useAnimation';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import { useState, useEffect } from 'react';
 
 export default function Services() {
-  const { t } = useTranslation(['home']);
+  const { motion } = useAnimation();
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const services = {
-    web: {
-      title: 'Веб-разработка',
-      icon: '🚀',
-      features: [
-        'Next.js/React приложения',
-        'E-commerce платформы',
-        'Корпоративные порталы',
-        'Progressive Web Apps'
-      ],
-      color: 'purple'
-    },
-    marketing: {
-      title: 'Digital-маркетинг',
-      icon: '📈',
-      features: [
-        'SEO и контент-стратегия',
-        'Performance-маркетинг',
-        'Email-автоматизация',
-        'Social Media Management'
-      ],
-      color: 'brown'
-    },
-    complex: {
-      title: 'Комплексные решения',
-      icon: '💡',
-      features: [
-        'Digital-трансформация',
-        'Startup MVP разработка',
-        'Маркетплейсы и платформы',
-        'AI/ML интеграции'
-      ],
-      color: 'peach'
-    }
-  };
+  useEffect(() => {
+    fetch('/api/services')
+      .then((r) => r.json())
+      .then((json) => setServices(json))
+      .catch((e) => console.error('services api error', e))
+      .finally(() => setLoading(false));
+  }, []);
 
   const team = [
     {
@@ -111,7 +85,7 @@ export default function Services() {
       </section>
 
       {/* Услуги */}
-      <section className="py-16 md:py-24 bg-white">
+      <section id="web" className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -127,10 +101,14 @@ export default function Services() {
             </p>
           </motion.div>
 
+          {/* Дополнительные якоря для скролла из футера */}
+          <span id="marketing" className="block -mt-24 pt-24" aria-hidden="true" />
+          <span id="complex" className="block -mt-24 pt-24" aria-hidden="true" />
+
           <div className="grid md:grid-cols-3 gap-8">
-            {Object.entries(services).map(([key, service], index) => (
+            {services.map((service, index) => (
               <motion.div
-                key={key}
+                key={service.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -146,7 +124,7 @@ export default function Services() {
                       : 'bg-peach-warm/10 border border-peach-warm/30'
                   }`}
                 >
-                  <div className="text-4xl mb-4">{service.icon}</div>
+                  <div className="text-4xl mb-4">{service.icon || '✨'}</div>
                   <h3
                     className={`text-h3-mobile md:text-h3-desktop font-semibold mb-4 ${
                       service.color === 'purple'
@@ -184,7 +162,7 @@ export default function Services() {
       </section>
 
       {/* Команда */}
-      <section className="py-16 md:py-24 bg-gray-light">
+      <section id="team" className="py-16 md:py-24 bg-gray-light">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

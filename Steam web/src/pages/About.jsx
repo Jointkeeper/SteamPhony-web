@@ -25,6 +25,36 @@ export default function About() {
     }
   ];
 
+  // Правовая информация, перенесённая из отдельных страниц
+  const legalSections = [
+    {
+      id: 'privacy',
+      title: 'Политика конфиденциальности',
+      content: [
+        'Мы уважаем ваше право на конфиденциальность и собираем лишь минимальный объём персональных данных, необходимый для обработки обращений и улучшения сервиса.',
+        'Данные хранятся на защищённых серверах в ЕС, доступны только уполномоченным сотрудникам и никогда не продаются третьим лицам.',
+        'Вы можете запросить удаление или экспорт своих данных, отправив письмо на hello@steamphony.com.'
+      ]
+    },
+    {
+      id: 'terms',
+      title: 'Условия использования',
+      content: [
+        'Используя наш сайт, вы соглашаетесь не нарушать законы РФ и ЕС, не осуществлять попытки взлома и не публиковать запрещённый контент.',
+        'Вся информация предоставляется «как есть». Мы прилагаем усилия, чтобы она была актуальной, но не гарантируем абсолютную точность.',
+        'Любые споры решаются в соответствии с законодательством РФ с подсудностью по месту регистрации ООО «Steamphony».'
+      ]
+    },
+    {
+      id: 'cookies',
+      title: 'Cookie Policy',
+      content: [
+        'Мы используем собственные и сторонние cookies для аналитики (Google Analytics) и улучшения пользовательского опыта.',
+        'Вы можете отключить cookies в настройках браузера, однако это может повлиять на корректную работу некоторых функций сайта.'
+      ]
+    }
+  ];
+
   return (
     <>
       <Helmet>
@@ -93,6 +123,34 @@ export default function About() {
         </motion.h2>
         <div className="w-full h-96 bg-gradient-to-br from-peach-warm/30 to-cream rounded-3xl flex items-center justify-center">
           <span className="text-2xl text-gray-deep">[Interactive Role Diagram]</span>
+        </div>
+      </section>
+
+      {/* Правовая информация (ранее отдельные страницы) */}
+      <section id="legal" className="px-4 md:px-20 my-32">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-h2-mobile md:text-h2-desktop font-bold mb-12 text-gray-deep"
+        >
+          Правовая информация
+        </motion.h2>
+
+        <div className="space-y-12">
+          {legalSections.map(section => (
+            <div key={section.id} id={section.id} className="space-y-4">
+              <h3 className="text-xl font-semibold text-gray-deep">
+                {section.title}
+              </h3>
+              {section.content.map((paragraph, idx) => (
+                <p key={idx} className="text-gray-600">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
     </>

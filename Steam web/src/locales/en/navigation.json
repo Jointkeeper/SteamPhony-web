@@ -1,16 +1,13 @@
 {
   "menu": {
     "home": "Home",
-    "services": "Services",
+    "services": "Services & Expertise",
+    "work": "Work",
     "about": "About",
-    "contact": "Contact",
-    "blog": "Blog",
-    "caseStudies": "Case Studies"
+    "contact": "Contact"
   },
-  "submenu": {
-    "restaurantMarketing": "Restaurant Marketing",
-    "salonMarketing": "Salon Marketing",
-    "webDevelopment": "Web Development",
-    "contentProduction": "Content Production"
+  "aria": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   }
 } 

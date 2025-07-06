@@ -4,13 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000 --host",
+    "dev": "vite --port 3001 --host",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --ext js,jsx --fix",
     "preview": "vite preview",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.11",
@@ -44,6 +45,7 @@
     "jsdom": "^24.0.0",
     "postcss": "^8.5.6",
     "vite": "^7.0.0",
-    "vitest": "^1.5.0"
+    "vitest": "^1.5.0",
+    "@playwright/test": "^1.44.0"
   }
 }

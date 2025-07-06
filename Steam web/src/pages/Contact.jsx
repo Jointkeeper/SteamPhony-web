@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -7,7 +6,6 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 
 export default function Contact() {
-  const { t } = useTranslation(['forms', 'common']);
   const [activeTab, setActiveTab] = useState('form');
 
   const contactInfo = {
@@ -188,13 +186,7 @@ export default function Contact() {
                           <p className="font-semibold text-gray-deep">Мессенджеры</p>
                           <div className="flex space-x-3 mt-2">
                             <a 
-                              href="#" 
-                              className="text-purple-bright hover:text-purple-deep transition-colors"
-                            >
-                              WhatsApp
-                            </a>
-                            <a 
-                              href="#" 
+                              href="https://t.me/steamphony" 
                               className="text-purple-bright hover:text-purple-deep transition-colors"
                             >
                               Telegram

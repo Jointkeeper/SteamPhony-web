@@ -8,6 +8,8 @@ const NavigationContext = createContext(null);
 
 const historyBuffer = new NavigationHistory(10);
 
+/* eslint-disable react-refresh/only-export-components */
+
 export function NavigationProvider({ children }) {
   const [state, dispatch] = useReducer(navigationReducer, initialState);
 

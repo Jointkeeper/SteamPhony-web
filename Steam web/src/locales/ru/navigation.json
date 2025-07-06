@@ -1,16 +1,19 @@
 {
   "menu": {
     "home": "Главная",
-    "services": "Услуги",
+    "services": "Услуги и экспертиза",
+    "work": "Портфолио",
     "about": "О нас",
-    "contact": "Контакты",
-    "blog": "Блог",
-    "caseStudies": "Кейсы"
+    "contact": "Контакты"
   },
   "submenu": {
     "restaurantMarketing": "Маркетинг для ресторанов",
     "salonMarketing": "Маркетинг для салонов",
     "webDevelopment": "Веб-разработка",
     "contentProduction": "Продакшн контента"
+  },
+  "aria": {
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню"
   }
 } 

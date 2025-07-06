@@ -6,7 +6,7 @@ import { prefetchLink } from '../../utils/prefetch';
 
 /**
  * NavItem – single navigation link with trust-building micro-interactions.
- * • Gradient underline grows from center on hover/focus/active
+ * • Gradient underline grows from left on hover/focus/active
  * • Slight upward shift communicates responsiveness (progressive trust)
  *
  * highlight – renders link as CTA button (e.g. Contact)
@@ -36,6 +36,20 @@ const NavItem = memo(function NavItem({ to, children, highlight, onClick }) {
     hoveredRef.current = false;
   };
 
+  if (highlight) {
+    return (
+      <NavLink
+        to={to}
+        onClick={onClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="nav-cta"
+      >
+        {children}
+      </NavLink>
+    );
+  }
+
   return (
     <NavLink
       to={to}
@@ -44,11 +58,8 @@ const NavItem = memo(function NavItem({ to, children, highlight, onClick }) {
       onMouseLeave={handleMouseLeave}
       className={({ isActive }) =>
         clsx(
-          'nav-item',
-          {
-            'bg-[var(--color-action)] text-white px-4 py-2 rounded-md hover:bg-[var(--color-action-light)]': highlight,
-          },
-          isActive && !highlight && 'text-[var(--color-authority)]'
+          'nav-link',
+          isActive && 'nav-link--active'
         )
       }
       aria-current={({ isActive }) => (isActive ? 'page' : undefined)}

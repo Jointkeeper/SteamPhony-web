@@ -12,10 +12,9 @@ import { useNavigation } from '../../contexts';
 import './Header.css';
 
 const navigationMeta = [
-  { key: 'services', path: 'services', submenu: true },
-  { key: 'portfolio', path: 'portfolio' },
+  { key: 'services', path: 'services' },
+  { key: 'work', path: 'work' },
   { key: 'about', path: 'about' },
-  { key: 'blog', path: 'blog' },
   { key: 'contact', path: 'contact', highlight: true },
 ];
 
@@ -81,7 +80,7 @@ const Header = memo(function Header() {
     <>
       <header
         className={clsx(
-          'header fixed top-0 inset-x-0 h-20 md:h-[80px] w-full bg-white/90 z-[1000] transition-colors',
+          'header fixed top-0 inset-x-0 h-20 md:h-[80px] w-full z-[1000] transition-all',
           scrolled && 'header--scrolled'
         )}
       >
@@ -89,7 +88,7 @@ const Header = memo(function Header() {
           {/* Logo */}
           <a
             href={langPrefix + '/'}
-            className="text-xl font-bold text-[color:var(--color-authority)] focus-visible:outline-none"
+            className="logo focus-visible:outline-none"
           >
             Steamphony
           </a>
@@ -107,7 +106,7 @@ const Header = memo(function Header() {
           {/* Mobile menu button */}
           <button
             type="button"
-            className="md:hidden inline-flex items-center justify-center p-2 text-[color:var(--trust-700)] focus-visible:outline-[var(--color-authority)]"
+            className="mobile-menu-button md:hidden inline-flex items-center justify-center p-2 focus-visible:outline-purple-bright"
             aria-label={navState.isDrawerOpen ? t('aria.closeMenu') : t('aria.openMenu')}
             aria-expanded={navState.isDrawerOpen}
             onClick={toggleDrawer}
@@ -129,7 +128,7 @@ const Header = memo(function Header() {
       </header>
 
       {/* Spacer to avoid content jump (header height) */}
-      <div className="h-20 md:h-[80px]" aria-hidden="true" />
+      <div style={{ height: '80px', minHeight: '80px', width: '100%' }} aria-hidden="true" />
 
       {/* Mobile Drawer */}
       <MobileDrawer isOpen={navState.isDrawerOpen} navigationItems={navigationItems} />

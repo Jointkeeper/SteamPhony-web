@@ -1,3 +1,5 @@
+/* eslint-env node, jest */
+/* global vi */
 import '@testing-library/jest-dom';
 
 // Mock react-i18next

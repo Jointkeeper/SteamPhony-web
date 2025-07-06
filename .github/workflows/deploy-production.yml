@@ -1,0 +1,30 @@
+name: Deploy Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+
+      - name: Rsync project to server
+        run: |
+          rsync -av --delete ./ ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }}:${{ secrets.PROD_PATH }}
+
+      - name: Deploy via docker-compose
+        run: |
+          ssh ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} "cd ${{ secrets.PROD_PATH }}/steamphony-api && docker-compose pull && docker-compose up -d --remove-orphans"
+
+      - name: Post-deploy healthcheck
+        run: |
+          curl -f https://${{ secrets.PROD_DOMAIN }}/ready || (echo 'Healthcheck failed'; exit 1) 

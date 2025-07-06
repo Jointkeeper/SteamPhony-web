@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import dotenv from 'dotenv';
-import emailService from './services/emailService.js';
 import { body, validationResult } from 'express-validator';
 import { PrismaClient } from '@prisma/client';
 import xss from 'xss-clean';
@@ -15,19 +14,39 @@ import { rateLimiter } from '../middleware/rateLimiter.js';
 import { dirname, resolve as pathResolve } from 'path';
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
+import client from 'prom-client';
+import { emailQueue } from './queue/emailQueue.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { requireRole } from '../middleware/requireRole.js';
+import { logger } from './utils/logger.js';
+import crypto from 'crypto';
+import portfolioRouter from './routes/portfolio.js';
+import servicesRouter from './routes/services.js';
+import contactRouter from './routes/contact.js';
 
 dotenv.config();
 
+// Startup security checks
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'changeme') {
+  // eslint-disable-next-line no-console
+  console.error('FATAL: JWT_SECRET missing or default value');
+  process.exit(1);
+}
+
 const app = express();
+
+// Prometheus metrics
+client.collectDefaultMetrics();
 
 // Security middleware
 app.use(helmet());
 app.use(compression());
 
 // CORS
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? (process.env.CORS_ORIGIN || '').split(',')
-  : ['http://localhost:5173', 'http://localhost:3000'];
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').filter(Boolean)
+  : ['http://localhost:5173'];
 
 app.use(
   cors({
@@ -35,6 +54,25 @@ app.use(
     credentials: true,
   })
 );
+
+// Per-request CSP with nonce (no 'unsafe-inline')
+app.use((req, res, next) => {
+  const nonce = crypto.randomBytes(16).toString('base64');
+  res.locals.cspNonce = nonce;
+
+  const cspDirectives = {
+    defaultSrc: ["'self'"],
+    imgSrc: ["'self'", 'data:', 'https:'],
+    scriptSrc: ["'self'", `'nonce-${nonce}'`, 'https:'],
+    styleSrc: ["'self'", `'nonce-${nonce}'`, 'https:'],
+    connectSrc: ["'self'", ...allowedOrigins],
+  };
+
+  helmet({
+    contentSecurityPolicy: { directives: cspDirectives },
+    crossOriginEmbedderPolicy: false,
+  })(req, res, next);
+});
 
 // Logging
 app.use(morgan('combined'));
@@ -83,86 +121,6 @@ const contactValidation = [
   body('captchaToken').notEmpty().withMessage('Captcha token is required'),
 ];
 
-// Rate limiting for contact form
-app.use('/api/contact', rateLimiter);
-
-// Contact form endpoint
-app.post('/api/contact', contactValidation, async (req, res, next) => {
-  try {
-    // validation result
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(createError('VALIDATION_ERROR', 'Validation failed', errors.array(), 400, 'validation'));
-    }
-
-    const { name, email, phone, businessType, message, language = 'en', captchaToken } = req.body;
-
-    // Verify captcha if secret provided
-    if (process.env.CAPTCHA_SECRET) {
-      const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET}&response=${captchaToken}`;
-      const captchaRes = await fetch(verifyUrl, { method: 'POST' });
-      const captchaJson = await captchaRes.json();
-      if (!captchaJson.success) {
-        return next(createError('CAPTCHA_FAILED', 'Captcha verification failed', captchaJson['error-codes'] || null, 400, 'validation'));
-      }
-    }
-
-    // Persist to database
-    const lead = await prisma.lead.create({
-      data: {
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone?.trim() || null,
-        businessType: businessType || null,
-        message: message.trim(),
-        language,
-        ip: req.ip,
-        userAgent: req.get('User-Agent'),
-      },
-    });
-
-    console.log('📧 New contact submission:', {
-      id: lead.id,
-      name: lead.name,
-      email: lead.email,
-      businessType: lead.businessType,
-      language: lead.language,
-      timestamp: lead.createdAt,
-    });
-
-    // Отправка email уведомлений (асинхронно)
-    emailService
-      .sendContactNotification({
-        ...lead,
-        timestamp: lead.createdAt,
-      })
-      .then((success) => {
-        if (success) {
-          console.log('📧 Email notifications sent successfully');
-        } else {
-          console.log('⚠️ Email sending failed, but form was saved');
-        }
-      })
-      .catch((err) => {
-        console.error('❌ Email service error:', err.message);
-      });
-
-    res.status(201).json({
-      success: true,
-      message: 'Contact form submitted successfully',
-      lead: {
-        id: lead.id,
-        name: lead.name,
-        email: lead.email,
-        createdAt: lead.createdAt,
-      },
-    });
-  } catch (error) {
-    console.error('❌ Contact form error:', error);
-    next(error);
-  }
-});
-
 // Analytics endpoint
 app.post('/api/analytics/event', requireApiKey, (req, res, next) => {
   try {
@@ -176,7 +134,7 @@ app.post('/api/analytics/event', requireApiKey, (req, res, next) => {
       userAgent: req.get('User-Agent'),
     };
 
-    console.log('📊 Analytics event:', analyticsEvent);
+    logger.info('Analytics event', analyticsEvent);
 
     res.json({ success: true });
   } catch (error) {
@@ -226,10 +184,88 @@ if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER_UI === '
       const __dirname = dirname(fileURLToPath(import.meta.url));
       const swaggerDocument = YAML.load(pathResolve(__dirname, '../openapi.yaml'));
       app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-      console.log('📚 Swagger UI available at /api/docs');
+      logger.info('Swagger UI available at /api/docs');
     });
   });
 }
+
+// Liveness probe
+app.get('/live', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Readiness probe – проверяем БД
+app.get('/ready', async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).send('READY');
+  } catch (err) {
+    logger.error('Readiness DB check failed', err);
+    res.status(503).json({ status: 'ERROR', message: 'Database not reachable' });
+  }
+});
+
+// AUTH routes
+const authValidationRegister = [
+  body('email').isEmail().withMessage('Valid email required'),
+  body('password').isLength({ min: 6 }).withMessage('Password min 6 chars'),
+];
+
+app.post('/api/auth/register', authValidationRegister, async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(createError('VALIDATION_ERROR', 'Validation failed', errors.array(), 400, 'validation'));
+    }
+
+    const { email, password } = req.body;
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return next(createError('CONFLICT', 'User already exists', null, 409, 'auth'));
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({ data: { email, passwordHash } });
+
+    const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET || 'changeme', {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    });
+
+    res.status(201).json({ token, user: { id: user.id, email: user.email, role: user.role } });
+  } catch (err) {
+    next(err);
+  }
+});
+
+const authValidationLogin = [
+  body('email').isEmail(),
+  body('password').exists(),
+];
+
+app.post('/api/auth/login', authValidationLogin, async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(createError('VALIDATION_ERROR', 'Validation failed', errors.array(), 400, 'validation'));
+    }
+    const { email, password } = req.body;
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return next(createError('UNAUTHORIZED', 'Invalid credentials', null, 401, 'auth'));
+    }
+    const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET || 'changeme', {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    });
+    res.json({ token, user: { id: user.id, email: user.email, role: user.role } });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Example protected route
+app.get('/api/admin/ping', requireRole('admin'), (req, res) => {
+  res.json({ success: true, message: 'pong', user: req.user.id });
+});
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -248,8 +284,21 @@ process.on('SIGINT', async () => {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Steamphony API server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
+  logger.info(`Steamphony API server running on port ${PORT}`);
+  logger.info(`Health check: http://localhost:${PORT}/api/health`);
 });
+
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+  } catch (err) {
+    res.status(500).end(err.message);
+  }
+});
+
+app.use('/api/portfolio', portfolioRouter);
+app.use('/api/services', servicesRouter);
+app.use('/api/contact', contactRouter);
 
 export default app; 

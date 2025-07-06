@@ -1,3 +1,5 @@
+/* eslint-env node, jest */
+/* global vi, describe, it, expect, global */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ContactForm from '../../../components/ContactForm';

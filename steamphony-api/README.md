@@ -40,6 +40,21 @@ This will start:
 
 Environment variables are loaded from `.env` (see `env.example`). The API service waits for Postgres via `depends_on`.
 
+### Key Environment Variables
+
+| Category | Variable | Description |
+|----------|----------|-------------|
+| Captcha  | `CAPTCHA_SECRET` | reCAPTCHA v3 secret key used to verify tokens from frontend |
+| Security | `JWT_SECRET` | Secret for signing JWT tokens |
+| Redis    | `REDIS_HOST` / `REDIS_PORT` | Connection settings for Redis (BullMQ queue) |
+| Logging  | `LOG_TO_FILE` | Enable file logs (`true/false`) |
+| Logging  | `LOG_DIR` | Directory for log files |
+| Logging  | `LOG_ROTATE_DAYS` | How many days to keep rotated files |
+| Logging  | `LOKI_ENABLED` | Enable Loki transport (`true/false`) |
+| Logging  | `LOKI_HOST` | Loki endpoint URL |
+
+Refer to `env.example` for full list.
+
 Stop and remove containers:
 
 ```bash
@@ -55,6 +70,12 @@ docker-compose down
 
 ## Endpoints
 
-- `GET /api/health` – health check
+- `GET /live` – liveness probe
+- `GET /ready` – readiness probe
+- `GET /metrics` – Prometheus metrics
+- `GET /api/health` – legacy health check
 - `POST /api/contact` – contact form
-- `POST /api/analytics/event` – analytics event 
+- `POST /api/analytics/event` – analytics event
+- `POST /api/auth/register` – register user and get JWT
+- `POST /api/auth/login` – login and get JWT
+- `GET /api/admin/ping` – sample protected route (role: admin)

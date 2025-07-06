@@ -14,11 +14,13 @@ export const initGA = () => {
         send_page_view: false,
       },
     });
-    // eslint-disable-next-line no-console
-    console.log(`GA4 initialized: ${GA_MEASUREMENT_ID} (${import.meta.env.VITE_ENVIRONMENT})`);
+    if (import.meta.env.DEV) {
+      console.log(`GA4 initialized: ${GA_MEASUREMENT_ID} (${import.meta.env.VITE_ENVIRONMENT})`);
+    }
   } else {
-    // eslint-disable-next-line no-console
-    console.warn('GA4 not initialized: invalid or missing measurement ID');
+    if (import.meta.env.DEV) {
+      console.warn('GA4 not initialized: invalid or missing measurement ID');
+    }
   }
 };
 
@@ -37,9 +39,7 @@ export const trackEvent = (action, category, label, value) => {
 // Логгер событий
 export function logEvent(category, action, label = '', value = undefined) {
   ReactGA.event({ category, action, label, value });
-  // Можно добавить дополнительный вывод в консоль для отладки
-  if (process.env.NODE_ENV === 'development') {
-    // eslint-disable-next-line no-console
+  if (import.meta.env.DEV) {
     console.log('[LOG EVENT]', { category, action, label, value });
   }
 }

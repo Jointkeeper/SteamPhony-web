@@ -12,12 +12,13 @@ const CAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 
 const ContactForm = ({ title, subtitle, size = 'default' }) => {
   const { t, i18n } = useTranslation(['forms', 'common']);
+  const langPrefix = `/${i18n.language.split('-')[0]}`;
   
   const [formData, setFormData] = useState({
     name: '',
     email: '', 
     phone: '',
-    serviceType: '',
+    service: '',
     budget: '',
     message: ''
   });
@@ -50,7 +51,7 @@ const ContactForm = ({ title, subtitle, size = 'default' }) => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = t('forms:validation.email');
     }
-    if (formData.phone && !/^[\+]?[^\s][\d]{0,15}$/.test(formData.phone.replace(/\s/g, ''))) {
+    if (formData.phone && !/^\+?\d{0,15}$/.test(formData.phone.replace(/\s/g, ''))) {
       newErrors.phone = t('forms:validation.phone');
     }
     if (!formData.message.trim()) {
@@ -92,7 +93,7 @@ const ContactForm = ({ title, subtitle, size = 'default' }) => {
         source: 'website_contact_form',
         captchaToken,
       };
-      const response = await fetch(`${API_BASE_URL}/api/contact`, {
+      const response = await fetch(`${API_BASE_URL}/api/contact/main`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submissionData),
@@ -105,11 +106,11 @@ const ContactForm = ({ title, subtitle, size = 'default' }) => {
             event_category: 'lead_generation',
             event_label: 'contact_form',
             language: i18n.language,
-            service_type: formData.serviceType || 'unknown',
+            service_type: formData.service || 'unknown',
             budget: formData.budget || 'unknown'
           });
         }
-        setFormData({ name: '', email: '', phone: '', serviceType: '', budget: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', service: '', budget: '', message: '' });
         setTimeout(() => setSubmitted(false), 5000);
       } else {
         throw new Error('Form submission failed');
@@ -208,36 +209,29 @@ const ContactForm = ({ title, subtitle, size = 'default' }) => {
                 />
 
                 <Select
-                  id="serviceType"
-                  label={t('forms:contact.fields.serviceType.label', 'Интересующая услуга')}
-                  value={formData.serviceType}
-                  onChange={handleChange('serviceType')}
-                  error={errors.serviceType}
-                  className="focus:border-purple-bright"
-                >
-                  <option value="">{t('forms:contact.fields.serviceType.placeholder', 'Выберите услугу')}</option>
-                  <option value="web-development">Веб-разработка</option>
-                  <option value="digital-marketing">Digital-маркетинг</option>
-                  <option value="complex-solution">Комплексное решение</option>
-                  <option value="consultation">Консультация</option>
-                </Select>
+                  id="service"
+                  label={t('contact.main_form.service_label')}
+                  value={formData.service}
+                  onChange={handleChange('service')}
+                  options={[
+                    { value: '', label: t('contact.main_form.service_placeholder') },
+                    { value: 'consultation', label: t('cta.get_consultation') },
+                    { value: 'web-development', label: t('portfolio.filter_web') },
+                    { value: 'advertising', label: t('portfolio.filter_advertising') },
+                    { value: 'content', label: t('portfolio.filter_content') },
+                    { value: 'complex', label: 'Комплекс' }
+                  ]}
+                  required
+                />
               </div>
 
               <Select
                 id="budget"
-                label={t('forms:contact.fields.budget.label', 'Примерный бюджет')}
+                label={t('contact.main_form.budget_label')}
                 value={formData.budget}
                 onChange={handleChange('budget')}
-                error={errors.budget}
-                className="focus:border-purple-bright"
-              >
-                <option value="">{t('forms:contact.fields.budget.placeholder', 'Выберите бюджет')}</option>
-                <option value="5-10k">$5,000 - $10,000</option>
-                <option value="10-25k">$10,000 - $25,000</option>
-                <option value="25-50k">$25,000 - $50,000</option>
-                <option value="50k+">$50,000+</option>
-                <option value="discuss">Обсудить индивидуально</option>
-              </Select>
+                options={Object.entries(t('budget_options', { returnObjects: true })).map(([k,v])=>({value:k,label:v}))}
+              />
 
               <Textarea
                 id="message"
@@ -263,7 +257,10 @@ const ContactForm = ({ title, subtitle, size = 'default' }) => {
 
               <p className="text-xs text-gray-500 text-center mt-4">
                 Нажимая кнопку, вы соглашаетесь с{' '}
-                <a href="/privacy" className="text-purple-bright hover:text-purple-deep underline">
+                <a
+                  href={`${langPrefix}/about#privacy`}
+                  className="text-purple-bright hover:text-purple-deep underline"
+                >
                   политикой конфиденциальности
                 </a>
               </p>

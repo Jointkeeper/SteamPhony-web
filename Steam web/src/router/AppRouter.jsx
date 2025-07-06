@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import {
   Routes,
   Route,
@@ -8,18 +8,15 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import LanguageLayout from '../layouts/LanguageLayout';
+import Loader from '../components/Loader';
 
 // Page components
-import Home from '../pages/Home';
-import Services from '../pages/Services';
-import RestaurantMarketing from '../pages/RestaurantMarketing';
-import SalonMarketing from '../pages/SalonMarketing';
-import WebDevelopment from '../pages/WebDevelopment';
-import About from '../pages/About';
-import Contact from '../pages/Contact';
-import Blog from '../pages/Blog';
-import NotFound from '../pages/NotFound';
-import Portfolio from '../pages/Portfolio';
+const Home = lazy(() => import('../pages/Home'));
+const Services = lazy(() => import('../pages/Services'));
+const Portfolio = lazy(() => import('../pages/Portfolio'));
+const Contact = lazy(() => import('../pages/Contact'));
+const NotFound = lazy(() => import('../pages/NotFound'));
+const About = lazy(() => import('../pages/About'));
 
 // Supported languages constant – helps to avoid hard-coded values across the app
 const SUPPORTED_LANGS = ['en', 'ru'];
@@ -56,26 +53,20 @@ export default function AppRouter() {
   }, [location.pathname, i18n.language, navigate]);
 
   return (
-    <Routes>
-      {/* Language-scoped routes */}
-      <Route path="/:lang" element={<LanguageLayout />}>
-        <Route index element={<Home />} />
-
-        <Route path="services" element={<Services />}>
-          <Route index element={<Services />} />
-          <Route path="restaurant-marketing" element={<RestaurantMarketing />} />
-          <Route path="salon-marketing" element={<SalonMarketing />} />
-          <Route path="web-development" element={<WebDevelopment />} />
+    <Suspense fallback={<Loader fullScreen />}>
+      <Routes>
+        {/* Language-scoped routes */}
+        <Route path="/:lang" element={<LanguageLayout />}>
+          <Route index element={<Home />} />
+          <Route path="services" element={<Services />} />
+          <Route path="work" element={<Portfolio />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
         </Route>
 
-        <Route path="about" element={<About />} />
-        <Route path="portfolio" element={<Portfolio />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="blog" element={<Blog />} />
-      </Route>
-
-      {/* 404 */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   );
 } 
