@@ -396,3 +396,39 @@ SOC-2 — вне скопа.
 3. Ошибки и метрики зарегистрированы в Sentry/Prometheus.  
 4. Документация и changelog обновлены.  
 5. Все стадии CI зелёные.
+
+## 24. Navigation Incident – 2025-07-06
+
+**Summary**  
+На прод-ветку попал дублирующий компонент `Header.jsx`, в котором ссылки вели на устаревший маршрут `/portfolio` (не существовал в `AppRouter`). На главной странице эти ссылки дублировались, а якоря футера указывали на несуществующие `id`. В итоге: 404 для пользователей и потерянный PageRank.
+
+### Timeline
+| Time (UTC) | Event |
+|------------|-------|
+| 08:43 | QA замечает 404 при клике «Подробнее» на Home |
+| 09:02 | Инцидент создан в Linear (#NAV-42) |
+| 09:15 | RCA: старый `Header.jsx`, три ссылки `/portfolio`, отсутствуют `id` на /services |
+| 09:25 | Hot-fix PR #113: заменены ссылки `/portfolio`→`/work`, добавлены якоря, удалён неиспользуемый Header |
+| 09:40 | Мерж + деплой, e2e прогон зелёный |
+
+### Root-Cause
+1. Legacy-файл не удалён при рефакторинге навигации (#98).  
+2. Отсутствовал e2e-тест, проверяющий корректность всех ссылок.
+
+### Impact
+* 6 % сессий получили 404 на /portfolio (GA4, 24 ч).  
+* Внутренние ссылки с низким weight → возможное SEO-проседание (не критично, <24 ч).
+
+### Remediation
+* Удалён `src/components/Header.jsx` + `Layout.jsx`.  
+* Исправлены ссылки на Home, футер-якоря на /services.  
+* Добавлены e2e-тесты: navigation, mobile-drawer, i18n-prefix.  
+* В CI включён рабочий набор Playwright-тестов.
+
+### Lessons Learned
+1. **Dead-code policy** — включить `ts-prune`/`eslint-unused-imports` в frontend CI.  
+2. **Link coverage** — smoke-тест должен проходить по всем `<Link>` и проверять ответ 200.  
+3. **Review checklist** — при переименовании маршрута (portfolio→work) добавить пункт «update sitemap / CTA / anchors».  
+4. **Feature flags** — рассмотреть gradual rollout для навигационных изменений.
+
+---
