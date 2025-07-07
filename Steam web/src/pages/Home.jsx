@@ -1,10 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import ContactForm from '../components/ContactForm';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import useAnimation from '../hooks/useAnimation';
-import { TestimonialsSection } from '../components/TestimonialsSection';
+import Loader from '../components/Loader';
+
+// Lazy load TestimonialsSection since it's below the fold
+const TestimonialsSection = lazy(() => import('../components/TestimonialsSection').then(module => ({ default: module.TestimonialsSection })));
 
 export default function Home() {
   const { motion } = useAnimation();
@@ -293,8 +297,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <TestimonialsSection />
+      {/* Testimonials Section - Lazy loaded for better performance */}
+      <Suspense fallback={<div className="py-16 bg-gray-light flex items-center justify-center"><Loader /></div>}>
+        <TestimonialsSection />
+      </Suspense>
 
       {/* Блок процесса */}
       <section className="py-16 md:py-24 bg-white">

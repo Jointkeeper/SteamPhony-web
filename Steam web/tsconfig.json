@@ -18,6 +18,7 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
+    "noEmit": true,
     "baseUrl": "./",
     "paths": {
       "@ui/*": ["src/atoms/*", "src/molecules/*", "src/organisms/*"],

@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "environment": "staging", 
+  "version": "1.0.0-staging",
+  "timestamp": "2024-12-19T10:00:00Z",
+  "services": {
+    "frontend": "healthy",
+    "build": "successful"
+  },
+  "checks": {
+    "dependencies": "loaded",
+    "routing": "functional",
+    "assets": "accessible",
+    "performance": "monitored"
+  },
+  "metadata": {
+    "deployedAt": "2024-12-19T10:00:00Z",
+    "buildHash": "staging-build",
+    "nodeVersion": "18.x",
+    "platform": "vercel"
+  }
+} 

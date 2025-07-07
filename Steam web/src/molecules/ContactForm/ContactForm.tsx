@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema, ContactFormData } from './ContactForm.types';
@@ -18,6 +18,8 @@ export const ContactForm: React.FC = () => {
 
   const { lockNavigation, unlockNavigation } = useNavigation();
 
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   const onSubmit = async (data: ContactFormData) => {
     lockNavigation('contact_form_submit');
     try {
@@ -32,11 +34,9 @@ export const ContactForm: React.FC = () => {
         throw new Error(err?.error?.message || 'Ошибка отправки формы');
       }
 
-      // eslint-disable-next-line no-alert -- temporary success feedback
-      alert('Спасибо! Ваше сообщение отправлено.');
+      setFeedback({ type: 'success', message: 'Спасибо! Ваше сообщение отправлено.' });
     } catch (error: any) {
-      // eslint-disable-next-line no-alert
-      alert(error.message || 'Ошибка, попробуйте позже');
+      setFeedback({ type: 'error', message: error.message || 'Ошибка, попробуйте позже' });
     } finally {
       unlockNavigation();
     }
@@ -123,6 +123,21 @@ export const ContactForm: React.FC = () => {
       <Button type="submit" variant="trust" loading={isSubmitting} disabled={isSubmitting || isSubmitSuccessful}>
         {isSubmitSuccessful ? 'Отправлено!' : 'Отправить'}
       </Button>
+
+      {/* Inline feedback */}
+      <div aria-live="polite" className="min-h-[24px]">
+        {feedback && (
+          <p
+            className={
+              feedback.type === 'success'
+                ? 'text-green-600 text-sm mt-2'
+                : 'text-red-600 text-sm mt-2'
+            }
+          >
+            {feedback.message}
+          </p>
+        )}
+      </div>
     </form>
   );
 };

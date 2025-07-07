@@ -3,10 +3,16 @@ import React, { useEffect, useRef, useState } from 'react';
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   placeholderSrc?: string; // low-res preview (base64)
   skeletonClassName?: string;
+  /** Optional WebP source for modern browsers */
+  srcWebp?: string;
+  /** Optional AVIF source for browsers that support AVIF */
+  srcAvif?: string;
 }
 
 export const LazyImage: React.FC<LazyImageProps> = ({
   src,
+  srcWebp,
+  srcAvif,
   placeholderSrc,
   skeletonClassName = 'bg-[var(--trust-50)]',
   alt = '',
@@ -43,15 +49,21 @@ export const LazyImage: React.FC<LazyImageProps> = ({
           style={{ backgroundImage: placeholderSrc ? `url(${placeholderSrc})` : undefined }}
         />
       )}
-      {/* eslint-disable-next-line jsx-a11y/alt-text */}
-      <img
-        ref={imgRef}
-        alt={alt}
-        loading={loading}
-        {...rest}
-        onLoad={() => setLoaded(true)}
-        className={isLoaded ? 'w-full h-full object-cover' : 'hidden'}
-      />
+
+      {/* Используем <picture> для современных форматов (AVIF / WebP) */}
+      <picture className={isLoaded ? undefined : 'hidden'}>
+        {srcAvif && <source srcSet={srcAvif} type="image/avif" />}
+        {srcWebp && <source srcSet={srcWebp} type="image/webp" />}
+        {/* eslint-disable-next-line jsx-a11y/alt-text */}
+        <img
+          ref={imgRef}
+          alt={alt}
+          loading={loading}
+          {...rest}
+          onLoad={() => setLoaded(true)}
+          className="w-full h-full object-cover"
+        />
+      </picture>
     </>
   );
 };

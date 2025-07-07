@@ -147,6 +147,12 @@ VITE_CAPTCHA_SITE_KEY=
 - Email: hello@steamphony.com
 - Telegram: @steamphony
 
+## 📚 Дополнительная документация
+
+- [🚨 Troubleshooting Guide для Frontend AI Developer](../docs/AI_TROUBLESHOOTING_GUIDE.md)
+- [✅ Quality Gates Checklist](../docs/QUALITY_GATES_CHECKLIST.md)
+- [📊 Progress Tracking Dashboard](../docs/PROGRESS_TRACKING_DASHBOARD.md)
+
 ## 📄 Лицензия
 
 © 2024 Steamphony. Все права защищены.

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import PortfolioCard from '../atoms/PortfolioCard';
+import { PortfolioCard } from '../atoms/PortfolioCard';
 import useAnimation from '../hooks/useAnimation';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
@@ -37,24 +37,91 @@ export default function Portfolio() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
 
+
+  // MOCK: Используем статические данные, если API не доступен
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [projRes, catRes] = await Promise.all([
-          fetch('/api/portfolio'),
-          fetch('/api/portfolio/categories'),
-        ]);
-        const projectsJson = await projRes.json();
-        const categoriesJson = await catRes.json();
-        setProjects(projectsJson);
-        setCategories(categoriesJson);
-      } catch (err) {
-        console.error('Portfolio API error', err);
-      } finally {
-        setLoading(false);
+    // Здесь можно заменить на реальный fetch, если появится backend
+    const staticProjects = [
+      {
+        id: 1,
+        title: 'Gusto Italiano Website',
+        category: 'Restaurant',
+        color: 'purple',
+        result: '+35% online orders',
+        client: { industry: 'Ресторан', size: '50 сотрудников', challenges: 'Рост онлайн-заказов' },
+        solution: { tech: ['React', 'Vite', 'Tailwind'], strategies: ['Редизайн', 'SEO', 'PWA'] },
+        metrics: [
+          { label: 'Конверсия', value: '+20%', trend: 'up' },
+          { label: 'Время загрузки', value: '1.2s', trend: 'down' }
+        ],
+        image: 'https://placehold.co/600x400?text=Restaurant+Project',
+        placeholder: 'https://placehold.co/60x40?text=R',
+      },
+      {
+        id: 2,
+        title: 'Beauty Bliss Salon Landing',
+        category: 'Beauty',
+        color: 'brown',
+        result: '+48% bookings',
+        client: { industry: 'Салон красоты', size: '20 сотрудников', challenges: 'Заполнение расписания' },
+        solution: { tech: ['React', 'Tailwind'], strategies: ['Лендинг', 'SEO', 'Email-маркетинг'] },
+        metrics: [
+          { label: 'Бронирования', value: '+48%', trend: 'up' },
+          { label: 'SEO', value: '#1', trend: 'up' }
+        ],
+        image: 'https://placehold.co/600x400?text=Beauty+Project',
+        placeholder: 'https://placehold.co/60x40?text=B',
+      },
+      {
+        id: 3,
+        title: 'TechFlow SaaS Launch',
+        category: 'Technology',
+        color: 'blue',
+        result: '+300 qualified leads',
+        client: { industry: 'SaaS', size: '15 сотрудников', challenges: 'Лидогенерация B2B' },
+        solution: { tech: ['Next.js', 'Chakra UI'], strategies: ['Thought Leadership', 'LinkedIn Ads'] },
+        metrics: [
+          { label: 'Leads', value: '+300', trend: 'up' },
+          { label: 'CR', value: '15%', trend: 'up' }
+        ],
+        image: 'https://placehold.co/600x400?text=Tech+Project',
+        placeholder: 'https://placehold.co/60x40?text=T',
+      },
+      {
+        id: 4,
+        title: 'ModeFuture E-commerce Revamp',
+        category: 'E-commerce',
+        color: 'pink',
+        result: '+90% conversion rate',
+        client: { industry: 'Fashion', size: '10 сотрудников', challenges: 'Низкая конверсия' },
+        solution: { tech: ['Shopify', 'Liquid'], strategies: ['CRO', 'Email Retargeting'] },
+        metrics: [
+          { label: 'CR', value: '+90%', trend: 'up' },
+          { label: 'Repeat Purchases', value: '+150%', trend: 'up' }
+        ],
+        image: 'https://placehold.co/600x400?text=Fashion+Project',
+        placeholder: 'https://placehold.co/60x40?text=F',
+      },
+      {
+        id: 5,
+        title: 'Legal Firm Local SEO',
+        category: 'Legal',
+        color: 'green',
+        result: 'Top-3 local SERP',
+        client: { industry: 'Legal', size: '30 сотрудников', challenges: 'Местная конкуренция' },
+        solution: { tech: ['WordPress'], strategies: ['Local SEO', 'Reputation'] },
+        metrics: [
+          { label: 'Consultations', value: '+200%', trend: 'up' },
+          { label: 'Satisfaction', value: '4.9/5', trend: 'up' }
+        ],
+        image: 'https://placehold.co/600x400?text=Legal+Project',
+        placeholder: 'https://placehold.co/60x40?text=L',
       }
-    }
-    fetchData();
+    ];
+    const staticCategories = ['Restaurant', 'Beauty', 'Technology', 'E-commerce', 'Legal'];
+    setProjects(staticProjects);
+    setCategories(staticCategories);
+    setLoading(false);
   }, []);
 
   const filtered = selectedCategory === 'all'
