@@ -52,6 +52,39 @@ export const errorLog = (error: Error, context?: string) => {
   }
 };
 
+// Unified logger for performance monitoring
+export const devLogger = {
+  info: (message: string, data?: any) => {
+    if (isDev) {
+      console.log(`ℹ️  [INFO] ${message}`, data);
+    }
+  },
+  
+  warn: (message: string, data?: any) => {
+    if (isDev) {
+      console.warn(`⚠️  [WARN] ${message}`, data);
+    }
+  },
+  
+  error: (message: string, data?: any) => {
+    if (isDev) {
+      console.error(`🚨 [ERROR] ${message}`, data);
+    }
+  },
+  
+  performance: (message: string, data?: any) => {
+    if (isDev) {
+      console.log(`⚡ [PERF] ${message}`, data);
+    }
+  },
+  
+  debug: (message: string, data?: any) => {
+    if (isDev) {
+      console.log(`🔧 [DEBUG] ${message}`, data);
+    }
+  }
+};
+
 // Hook для компонентов
 export const usePerformanceLogger = (componentName: string) => {
   const startTime = performance.now();

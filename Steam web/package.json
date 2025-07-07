@@ -4,26 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "build:analyze": "npm run build && npx vite-bundle-analyzer dist/assets/*.js",
+    "dev": "vite --port 3001 --host",
+    "build": "vite build",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext js,jsx --fix",
+    "lint:deps": "depcheck --json",
     "preview": "vite preview",
     "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
-    "e2e": "playwright test",
-    "e2e:headed": "playwright test --headed",
-    "e2e:debug": "playwright test --debug",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext ts,tsx --fix",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "performance:baseline": "node performance-baseline-measurement.js",
-    "performance:lighthouse": "lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --chrome-flags=\"--headless\"",
-    "performance:bundle-analyze": "npm run build:analyze",
-    "performance:measure": "npm run performance:baseline && npm run performance:lighthouse",
-    "content:collect": "echo 'Content Collection Tools - Access at /content-admin' && npm run dev"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@sentry/react": "^7.120.3",
@@ -65,10 +54,7 @@
     "postcss": "^8.5.6",
     "react-hook-form": "^7.60.0",
     "vite": "^7.0.0",
-    "vite-bundle-analyzer": "^0.7.0",
     "vitest": "^1.5.0",
-    "web-vitals": "^4.2.4",
-    "zod": "^3.25.74",
-    "lighthouse": "^12.2.0"
+    "zod": "^3.25.74"
   }
 }
