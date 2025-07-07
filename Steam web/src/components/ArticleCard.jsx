@@ -1,11 +1,12 @@
 import { Clock, Calendar, ArrowRight } from 'lucide-react';
 import Card from './ui/Card';
+import { OptimizedImage } from './ui/OptimizedImage';
 
 export default function ArticleCard({ article, categoryLabel }) {
   return (
     <Card className={`article-card ${article.featured ? 'featured' : ''}`} hover>
       <div className="article-image">
-        <img src={article.image} alt="" />
+        <OptimizedImage src={article.image} alt={article.title} />
         <div className="image-overlay" />
         {article.featured && <div className="featured-badge">Рекомендуем</div>}
       </div>

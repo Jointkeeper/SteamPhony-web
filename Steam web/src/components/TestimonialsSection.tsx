@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { testimonials } from '../data/testimonialsData';
 import { useAutoPlay } from '../hooks/useAutoPlay';
 import { StarRating } from '../atoms';
+import { OptimizedImage } from './ui/OptimizedImage';
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -63,7 +64,7 @@ export const TestimonialsSection: React.FC = () => {
               transition={{ duration: 0.5 }}
               className="mx-auto flex flex-col items-center max-w-xl"
             >
-              <img
+              <OptimizedImage
                 src={current.avatar}
                 alt={current.name}
                 className="w-20 h-20 rounded-full mb-4 object-cover"
