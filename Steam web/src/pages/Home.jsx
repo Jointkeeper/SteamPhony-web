@@ -4,6 +4,7 @@ import ContactForm from '../components/ContactForm';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import useAnimation from '../hooks/useAnimation';
+import { TestimonialsSection } from '../components/TestimonialsSection';
 
 export default function Home() {
   const { motion } = useAnimation();
@@ -291,6 +292,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* Блок процесса */}
       <section className="py-16 md:py-24 bg-white">
